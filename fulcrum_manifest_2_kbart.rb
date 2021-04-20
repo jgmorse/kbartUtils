@@ -33,6 +33,7 @@ def parse_identifiers(ids_str, row)
   ids.each { |i|
     if i.match(/^heb(\d\d\d\d\d)/)
       row['title_url']="https://hdl.handle.net/2027/heb.#{$1}"
+      row['title_id']="HEB#{$1}"
       return
     end
   }
@@ -60,12 +61,15 @@ header = [
 CSV.open('data/output.csv', 'w') do |output|
   output << header
   CSV.foreach(ARGV.shift, headers: true) do |input|
-    next unless(input['Published?'].match /TRUE/i)
+    next unless(input['Published?'].match(/TRUE/i))
     row = CSV::Row.new(header,[])
     row['publication_title'] = input['Title']
     parse_isbns(input['ISBN(s)'], row) if input['ISBN(s)']
     row['date_first_issue_online'] = input['Pub Year'].tr('c','') + '-01-01' if input['Pub Year']
     parse_identifiers(input['Identifier(s)'], row)
+    input['Creator(s)'].to_s.match(/^(.*),/) {row['first_author'] = $1}
+    row['coverage_depth']='fulltext'
+    row['publisher_name']=input['Publisher']
     output << row
   end
 end
