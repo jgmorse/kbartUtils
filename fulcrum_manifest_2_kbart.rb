@@ -33,7 +33,7 @@ def parse_identifiers(ids_str, row)
   ids.each { |i|
     if i.match(/^heb((\d\d\d\d\d)\.\d\d\d\d\.\d\d\d)/)
       row['title_url']="https://hdl.handle.net/2027/heb.#{$1}"
-      row['title_id']="HEB#{$2}"
+      row['title_id']="HEB#{$1}"
       return
     end
   }
