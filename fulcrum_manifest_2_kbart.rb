@@ -62,6 +62,7 @@ CSV.open('data/output.csv', 'w') do |output|
   output << header
   CSV.foreach(ARGV.shift, headers: true) do |input|
     next unless(input['Published?'].match(/TRUE/i))
+    next if(input['Tombstone?'])
     row = CSV::Row.new(header,[])
     row['publication_title'] = input['Title']
     parse_isbns(input['ISBN(s)'], row) if input['ISBN(s)']
